@@ -434,6 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8528e3e86687d6d488898b07a80b8945, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bronzeColor: {fileID: 2100000, guid: d704173c2723fa94885363c952549fd5, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
