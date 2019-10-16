@@ -46,7 +46,9 @@ public class Mining : MonoBehaviour
         {
             mineNow += miningSpeed;
 
-            if (goldResetTimer > 0)
+            if (goldResetTimer > 0) // This is my way of making sure that only a gold will spawn during the mineNow when gold 
+            // spawning conditions have been met. Subsequently gold will not spawn during the next mineNow and the game will continue
+            // to spawn bronze/silver until the next time that gold can spawn.
             {
                 goldResetTimer -= 1;
             }
@@ -59,10 +61,11 @@ public class Mining : MonoBehaviour
                 myCube.GetComponent<CubeController>().oreType = "Gold";
                 myCube.GetComponent<Renderer>().material = goldColor;
                 goldXPos = goldXPos + 2;
-                goldResetTimer += 2;
+                goldResetTimer += 2; // gold has spawned, wait for a few more mineNows before it can spawn again
             }
 
-            else if (bronzeSupply < 4 && goldResetTimer < 2) //nothing but bronze spawns if there is not enough of it
+            else if (bronzeSupply < 4 && goldResetTimer < 2) // Nothing but bronze spawns if there is not enough of it. Also bronze can't
+                                                             // spawn during the same mineNow as gold.
             {
                 bronzeSupply++;
                 cubePos = new Vector3(-7f+bronzeXPos, 4f, 0);
