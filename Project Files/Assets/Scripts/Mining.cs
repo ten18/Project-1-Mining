@@ -4,23 +4,39 @@ using UnityEngine;
 
 public class Mining : MonoBehaviour
 {
-    int bronze, bronzeShift;
-    int silver, silverShift;
-    int gold, goldShift;
+    public static int bronzeSupply;
+    public static int silverSupply;
+    public static int goldSupply;
+    public static int bronzeXPos;
+    public static int silverXPos, silverYPos;
+    public static int goldXPos, goldYPos;
     float mineNow;
+    public GameObject myCube;
     public float miningSpeed;
+    public GameObject cubePrefab;
+    Vector3 cubePos;
     public Material bronzeColor;
     public Material goldColor;
+    public static int bronzePoints;
+    public static int silverPoints;
+    public static int goldPoints;
+    public static int score;
+    int goldResetTimer;
     void Start()
     {
-        bronze = 0;
-        silver = 0;
-        gold = 0;
+        bronzeSupply = 0;
+        silverSupply = 0;
+        goldSupply = 0;
         miningSpeed = 3;
         mineNow = miningSpeed;
-        bronzeShift = 0;
-        silverShift = 0;
-        goldShift = 0;
+        bronzeXPos = 0;
+        silverXPos = 0;
+        goldXPos = 0;
+        bronzePoints = 1;
+        silverPoints = 10;
+        goldPoints = 100;
+        score = 0;
+        goldResetTimer = 0;
     }
 
     // Update is called once per frame
@@ -30,37 +46,50 @@ public class Mining : MonoBehaviour
         {
             mineNow += miningSpeed;
 
-            if (bronze < 4) //nothing but bronze spawns if there is not enough of it
+            if (goldResetTimer > 0)
             {
-                bronze++;
-                GameObject bronzeOre = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                bronzeOre.GetComponent<Renderer>().material = bronzeColor;
-                bronzeOre.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                bronzeOre.transform.position = new Vector3(-7f+bronzeShift, 0, 0);
-                bronzeShift = bronzeShift + 2; //spawn next bronze to the right of the previous
+                goldResetTimer -= 1;
             }
+
+            if (bronzeSupply == 2 && silverSupply == 2 && goldResetTimer == 0) //spawn a gold ONLY if this is true
+            {
+                goldSupply++;
+                cubePos = new Vector3(-7f+goldXPos, -4f, 0);
+                myCube = Instantiate(cubePrefab, cubePos, Quaternion.identity);
+                myCube.GetComponent<CubeController>().oreType = "Gold";
+                myCube.GetComponent<Renderer>().material = goldColor;
+                goldXPos = goldXPos + 2;
+                goldResetTimer += 2;
+            }
+
+            else if (bronzeSupply < 4 && goldResetTimer < 2) //nothing but bronze spawns if there is not enough of it
+            {
+                bronzeSupply++;
+                cubePos = new Vector3(-7f+bronzeXPos, 4f, 0);
+                myCube = Instantiate(cubePrefab, cubePos, Quaternion.identity);
+                myCube.GetComponent<CubeController>().oreType = "Bronze";
+                myCube.GetComponent<Renderer>().material = bronzeColor;
+                bronzeXPos = bronzeXPos + 2; //spawn next bronze to the right of the previous
+            }
+
             else //silver spawns when there is enough bronze
             {
-                silver++;
-                GameObject silverOre = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                silverOre.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                silverOre.transform.position = new Vector3(3f+silverShift, 0, 0);
-                silverShift = silverShift + 2; 
-            }
-
-            if (bronze == 2 && silver == 2) //spawn a gold ONLY if this is true
-            {
-                gold++;
-                GameObject goldOre = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                goldOre.GetComponent<Renderer>().material = goldColor;
-                goldOre.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                goldOre.transform.position = new Vector3(1f+goldShift, 3f, 0);
-                goldShift = goldShift + 2;
+                if (goldResetTimer < 2)
+                {
+                    silverSupply++;
+                    cubePos = new Vector3(-7f + silverXPos, 0, 0);
+                    myCube = Instantiate(cubePrefab, cubePos, Quaternion.identity);
+                    myCube.GetComponent<CubeController>().oreType = "Silver";
+                    silverXPos = silverXPos + 2;
+                }
             }
 
 
 
-            print("Bronze: " + bronze + "  Silver: " + silver + "  Gold: " + gold);
+
+
+            print("Bronze: " + bronzeSupply + "  Silver: " + silverSupply + "  Gold: " + goldSupply);
+            print("Score: " + score);
         }
     }
 }
